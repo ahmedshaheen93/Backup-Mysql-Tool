@@ -1,7 +1,5 @@
 package com.shaheen;
 
-import java.awt.*;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -21,7 +19,7 @@ public class DataBaseBackup {
             Date date = new Date();
             String filepath = "backup(with_DB)-" + database + "-" + host + "-(" + dateFormat.format(date) + ").sql";
 
-            String batchCommand ;
+            String batchCommand;
             if (!password.equals("")) {
                 batchCommand = dumpExePath + " -h " + host + " --port " + port + " -u " + user + " --password=" + password + " --add-drop-database -B " + database + " -r \"" + backupPath + "" + filepath + "\"";
             } else {
@@ -40,18 +38,16 @@ public class DataBaseBackup {
                 log.info("Could not create the backup for with DB " + database + " in " + host + ":" + port);
             }
 
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            log.info(ioe.getCause().toString());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.info(e.getCause().toString());
+
         }
         return status;
     }
 
-    public static boolean restoreDataBaseFromSqlFile(String restorePath,String mysqlPath ,String dbUser , String dbPass) {
+    public static boolean restoreDataBaseFromSqlFile(String restorePath, String mysqlPath, String dbUser, String dbPass) {
         try {
-            String[] executeCmd =new String[]{mysqlPath, "--user=" + dbUser, "--password=" + dbPass, "-e", "source " + restorePath};
+            String[] executeCmd = new String[]{mysqlPath, "--user=" + dbUser, "--password=" + dbPass, "-e", "source " + restorePath};
             System.out.println(Arrays.toString(executeCmd));
 
             /*NOTE: processComplete=0 if correctly executed, will contain other values if not*/
@@ -61,8 +57,9 @@ public class DataBaseBackup {
             /*NOTE: processComplete=0 if correctly executed, will contain other values if not*/
             return processComplete == 0;
 
-        } catch (IOException | InterruptedException | HeadlessException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            log.info(ex.getCause().toString());
+
         }
 
         return false;
